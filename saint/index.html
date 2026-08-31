@@ -11,54 +11,149 @@
 <meta property="og:type" content="website">
 <link rel="icon" href="../icon.png">
 <style>
-  :root { --indigo:#1A237E; --gold:#C8A84C; --ivory:#FDF6E3; }
-  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,serif; background:var(--ivory); color:#1b1b22; text-align:center; }
-  header { background:var(--indigo); color:#fff; padding:48px 20px 40px; }
-  header img.appicon { width:96px; height:96px; border-radius:22px; box-shadow:0 4px 14px rgba(0,0,0,.35); }
-  header h1 { margin:16px 0 0; font-size:1.8rem; }
-  header p { color:var(--gold); font-weight:600; margin-top:8px; }
-  main { max-width:560px; margin:0 auto; padding:36px 22px 8px; }
-  p.lead { font-size:1.05rem; line-height:1.6; color:#3a3a44; }
-  .badges { display:flex; flex-direction:column; gap:14px; align-items:center; margin:28px 0 8px; }
-  a.badge { display:block; width:min(280px, 80%); background:var(--indigo); color:#fff; text-decoration:none; font-weight:700; font-size:1.05rem; padding:16px 18px; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  :root {
+    --indigo:#1A237E; --gold:#C8A84C; --ivory:#FDF6E3;
+    --card:#FBF0D9; --text:#1b1b22; --muted:#6b6b74;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--ivory); color:var(--text); }
+  .serif { font-family:Georgia,"Times New Roman",serif; }
+
+  .topbar { background:var(--indigo); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .topbar img { width:28px; height:28px; border-radius:7px; }
+  .topbar span { font-weight:700; font-size:.95rem; }
+  .topbar small { color:var(--gold); font-weight:600; }
+
+  main { max-width:560px; margin:0 auto; padding:8px 18px 8px; }
+
+  .hero { text-align:center; padding:28px 8px 22px; }
+  .hero .medallion { width:88px; height:88px; border-radius:50%; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-size:40px; }
+  .hero h1 { font-family:Georgia,"Times New Roman",serif; font-size:2rem; margin:0 0 6px; color:var(--indigo); line-height:1.15; }
+  .hero .greek { font-family:Georgia,"Times New Roman",serif; font-size:1.2rem; color:var(--muted); margin:0 0 14px; }
+  .hero .chip { display:inline-block; font-size:.8rem; font-weight:700; padding:6px 14px; border-radius:999px; }
+
+  .divider { border:none; border-top:1px solid rgba(0,0,0,.12); margin:0 24px; }
+
+  .cards { display:flex; flex-direction:column; gap:16px; padding:22px 0 6px; text-align:left; }
+  .card { background:var(--card); border-radius:12px; padding:16px; }
+  .card h2 { font-family:Georgia,"Times New Roman",serif; font-size:1.05rem; margin:0 0 8px; color:var(--indigo); display:flex; align-items:center; gap:8px; }
+  .card h2 .ico { color:var(--gold); font-size:1.05rem; width:24px; text-align:center; flex:none; }
+  .card p { margin:0 0 0 32px; font-family:Georgia,"Times New Roman",serif; line-height:1.55; color:#3a3a44; white-space:pre-line; }
+  .card p.big { font-size:1.15rem; }
+
+  .namegroup { margin:10px 0 0 32px; }
+  .namegroup .glabel { font-size:.68rem; font-weight:700; letter-spacing:.08em; color:var(--muted); margin-bottom:6px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chips span { font-size:.85rem; padding:6px 12px; border-radius:999px; }
+  .chips.masc span { color:var(--indigo); background:rgba(26,35,126,.14); }
+  .chips.fem span { color:#B34D7A; background:rgba(179,77,122,.14); }
+
+  .saint-block + .saint-block { border-top:1px solid rgba(0,0,0,.12); margin-top:10px; }
+
+  .cta { text-align:center; padding:26px 0 10px; }
+  .cta p.lead { font-size:1.02rem; line-height:1.6; color:#3a3a44; margin:0 0 22px; }
+  .badges { display:flex; flex-direction:column; gap:14px; align-items:center; }
+  a.badge { display:block; width:min(280px, 90%); background:var(--indigo); color:#fff; text-decoration:none; font-weight:700; font-size:1.05rem; padding:16px 18px; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,.15); text-align:center; }
   a.badge small { display:block; font-weight:400; font-size:.78rem; color:var(--gold); margin-bottom:2px; }
   a.badge:hover { filter:brightness(1.1); }
-  footer { color:#888; font-size:.85rem; padding:28px 20px 24px; }
+
+  footer { color:#888; font-size:.85rem; padding:28px 20px 24px; text-align:center; }
   footer a { color:var(--indigo); }
 </style>
-<script>
-  // Deep-link landing: if the app is installed, iOS Universal Links / Android
-  // App Links intercept this URL before the browser ever loads it. Reaching
-  // this page means the visitor has no app (or is on desktop) — send phones
-  // to their store; the saint reference (?d=M-D) survives install via the
-  // store listing they land on.
-  (function () {
-    var ua = navigator.userAgent || "";
-    // In-app browsers (Messenger, Facebook, Instagram, …) block the store
-    // redirect and end up on a blank page — let them render this page and
-    // use the store buttons instead.
-    if (/FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|MicroMessenger|Snapchat/i.test(ua)) return;
-    if (/iPhone|iPad|iPod/i.test(ua)) {
-      window.location.replace("https://apps.apple.com/us/app/orthodox-calendar-name-days/id6783400246");
-    } else if (/Android/i.test(ua)) {
-      window.location.replace("https://play.google.com/store/apps/details?id=com.twopensmedia.orthodoxcalendar");
-    }
-  })();
-</script>
 </head>
 <body>
-<header>
-  <img class="appicon" src="../icon.png" alt="Orthodox Calendar app icon">
-  <h1>Orthodox Calendar</h1>
-  <p>Saints · Feast Days · Name Days</p>
-</header>
+<div class="topbar">
+  <img src="../icon.png" alt="">
+  <span>Orthodox Calendar</span>
+  <small>Saints · Name Days</small>
+</div>
+
 <main>
-  <p class="lead">Read the life of this saint — and see who the Church commemorates every day — in the free Orthodox Calendar app.</p>
-  <div class="badges">
-    <a class="badge" href="https://apps.apple.com/us/app/orthodox-calendar-name-days/id6783400246"><small>Download on the</small>App Store — iPhone</a>
-    <a class="badge" href="https://play.google.com/store/apps/details?id=com.twopensmedia.orthodoxcalendar"><small>Get it on</small>Google Play — Android</a>
+  <div id="saint"></div>
+  <div class="cta">
+    <p class="lead" id="lead">Read the life of this saint — and see who the Church commemorates every day — in the free Orthodox Calendar app.</p>
+    <div class="badges">
+      <a class="badge" href="https://apps.apple.com/us/app/orthodox-calendar-name-days/id6783400246"><small>Download on the</small>App Store — iPhone</a>
+      <a class="badge" href="https://play.google.com/store/apps/details?id=com.twopensmedia.orthodoxcalendar"><small>Get it on</small>Google Play — Android</a>
+    </div>
   </div>
 </main>
+
 <footer>© 2026 Two Pens Media · <a href="../privacy-policy.html">Privacy</a> · <a href="../support.html">Support</a></footer>
+
+<script>
+// Renders the saint(s) for ?d=M-D from saints.json, mirroring the app's
+// SaintDetailView. If the app is installed, universal links / app links
+// intercept this URL before the browser loads it — this page is the
+// no-app (or desktop / in-app-browser) fallback.
+(function () {
+  var m = /[?&]d=(\d{1,2})-(\d{1,2})/.exec(location.search);
+  if (!m) return;
+  var key = parseInt(m[1], 10) + "-" + parseInt(m[2], 10);
+
+  // Style per feast type — colors/icons mirror FeastType+Style.swift.
+  var STYLE = {
+    greatFeast: { icon: "✨",  color: "#C8A84C" },
+    apostle:    { icon: "⛵️", color: "#1A237E" },
+    martyr:     { icon: "🌿",  color: "#8B0000" },
+    holyWoman:  { icon: "🌸",  color: "#A64066" },
+    venerable:  { icon: "📖",  color: "#66668C" },
+    prophet:    { icon: "🔥",  color: "#B8610D" },
+    bishop:     { icon: "🏛️", color: "#6B3D99" },
+    general:    { icon: "☦️", color: "#66668C" }
+  };
+  var MONTHS = ["January","February","March","April","May","June",
+                "July","August","September","October","November","December"];
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function tint(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function chips(cls, label, names) {
+    if (!names || !names.length) return "";
+    return '<div class="namegroup"><div class="glabel">' + label + '</div>' +
+      '<div class="chips ' + cls + '">' +
+      names.map(function (n) { return "<span>" + esc(n) + "</span>"; }).join("") +
+      "</div></div>";
+  }
+
+  fetch("saints.json").then(function (r) { return r.json(); }).then(function (data) {
+    var saints = data[key];
+    if (!saints || !saints.length) return;
+
+    var dateStr = MONTHS[parseInt(m[1], 10) - 1] + " " + parseInt(m[2], 10);
+    var html = saints.map(function (s) {
+      var st = STYLE[s.type] || STYLE.general;
+      var block =
+        '<div class="saint-block">' +
+        '<div class="hero">' +
+          '<div class="medallion" style="background:' + tint(st.color, 0.12) + '">' + st.icon + "</div>" +
+          "<h1>" + esc(s.name) + "</h1>" +
+          (s.greek ? '<p class="greek">' + esc(s.greek) + "</p>" : "") +
+          '<span class="chip" style="color:' + st.color + ";background:" + tint(st.color, 0.12) + '">' + esc(s.feast) + "</span>" +
+        "</div>" +
+        '<hr class="divider">' +
+        '<div class="cards">' +
+          '<div class="card"><h2><span class="ico">🗓</span>Feast Day</h2><p class="big">' + dateStr + "</p></div>" +
+          (s.desc ? '<div class="card"><h2><span class="ico">📕</span>About</h2><p class="big">' + esc(s.desc) + "</p></div>" : "") +
+          (s.bio ? '<div class="card"><h2><span class="ico">📖</span>Life of the Saint</h2><p>' + esc(s.bio) + "</p></div>" : "") +
+          ((s.masc && s.masc.length) || (s.fem && s.fem.length)
+            ? '<div class="card"><h2><span class="ico">👥</span>Name Variations</h2>' +
+              chips("masc", "MASCULINE", s.masc) + chips("fem", "FEMININE", s.fem) + "</div>"
+            : "") +
+        "</div></div>";
+      return block;
+    }).join("");
+
+    document.getElementById("saint").innerHTML = html;
+    document.title = saints[0].name + " — Orthodox Calendar";
+    document.getElementById("lead").textContent =
+      "See who the Church commemorates every day — and never miss a name day — in the free Orthodox Calendar app.";
+  }).catch(function () { /* leave the generic page */ });
+})();
+</script>
 </body>
 </html>
