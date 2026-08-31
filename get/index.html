@@ -33,6 +33,10 @@
   // greetings may be on either platform, so the page decides, not the sender.
   (function () {
     var ua = navigator.userAgent || "";
+    // In-app browsers (Messenger, Facebook, Instagram, …) block the store
+    // redirect and end up on a blank page — let them render this page and
+    // use the store buttons instead.
+    if (/FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|MicroMessenger|Snapchat/i.test(ua)) return;
     var ios = /iPhone|iPad|iPod/i.test(ua);
     var android = /Android/i.test(ua);
     if (ios) {

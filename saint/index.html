@@ -34,6 +34,10 @@
   // store listing they land on.
   (function () {
     var ua = navigator.userAgent || "";
+    // In-app browsers (Messenger, Facebook, Instagram, …) block the store
+    // redirect and end up on a blank page — let them render this page and
+    // use the store buttons instead.
+    if (/FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|MicroMessenger|Snapchat/i.test(ua)) return;
     if (/iPhone|iPad|iPod/i.test(ua)) {
       window.location.replace("https://apps.apple.com/us/app/orthodox-calendar-name-days/id6783400246");
     } else if (/Android/i.test(ua)) {
