@@ -82,14 +82,18 @@
 <footer>© 2026 Two Pens Media · <a href="../privacy-policy.html">Privacy</a> · <a href="../support.html">Support</a></footer>
 
 <script>
-// Renders the saint(s) for ?d=M-D from saints.json, mirroring the app's
-// SaintDetailView. If the app is installed, universal links / app links
-// intercept this URL before the browser loads it — this page is the
+// Renders the saint for ?d=M-D&s=slug from saints/<month>.json (exported from
+// the app's saint database), mirroring the app's SaintDetailView. `s` is the
+// shared saint's slug; without it (links from app versions before 1.0.16) every
+// saint of that day is shown. If the app is installed, universal links / app
+// links intercept this URL before the browser loads it — this page is the
 // no-app (or desktop / in-app-browser) fallback.
 (function () {
   var m = /[?&]d=(\d{1,2})-(\d{1,2})/.exec(location.search);
   if (!m) return;
   var key = parseInt(m[1], 10) + "-" + parseInt(m[2], 10);
+  var sm = /[?&]s=([^&#]*)/.exec(location.search);
+  var slug = sm ? decodeURIComponent(sm[1]) : "";
 
   // Style per feast type — colors/icons mirror FeastType+Style.swift.
   var STYLE = {
@@ -120,9 +124,14 @@
       "</div></div>";
   }
 
-  fetch("saints.json").then(function (r) { return r.json(); }).then(function (data) {
+  fetch("saints/" + parseInt(m[1], 10) + ".json").then(function (r) { return r.json(); }).then(function (data) {
     var saints = data[key];
     if (!saints || !saints.length) return;
+    if (slug) {
+      for (var i = 0; i < saints.length; i++) {
+        if (saints[i].slug === slug) { saints = [saints[i]]; break; }
+      }
+    }
 
     var dateStr = MONTHS[parseInt(m[1], 10) - 1] + " " + parseInt(m[2], 10);
     var html = saints.map(function (s) {
