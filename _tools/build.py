@@ -226,6 +226,7 @@ def primary_feast(rec):
 # ---------------------------------------------------------------- page shell
 CSS_V = asset_v("assets/site.css")
 JS_V = asset_v("assets/site.js")
+GA_V = asset_v("assets/analytics.js")
 CROSS = ('<svg width="18" height="25" viewBox="0 0 22 30" aria-hidden="true"><g fill="#c8a84c">'
          '<rect x="9.5" width="3" height="30" rx="1.2"/><rect x="5" y="4" width="12" height="2.6" rx="1.2"/>'
          '<rect x="1" y="10" width="20" height="3" rx="1.4"/>'
@@ -300,6 +301,7 @@ def page(path, title, desc, body, *, nav=None, ld=(), og_image=None, app_arg=Non
 <link rel="preload" href="{P}/assets/fonts/alegreya-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{P}/assets/site.css?v={CSS_V}">
 <script defer src="{P}/assets/site.js?v={JS_V}"></script>
+<script defer src="{P}/assets/analytics.js?v={GA_V}"></script>
 {lds}
 </head>
 <body>
