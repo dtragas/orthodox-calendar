@@ -1,0 +1,4 @@
+# GitHub Pages (Jekyll) skips dot-folders unless told otherwise; the apps need
+# /.well-known/ for universal links (iOS) and app links (Android).
+# Folders starting with an underscore (_tools) stay unpublished.
+include: [".well-known"]

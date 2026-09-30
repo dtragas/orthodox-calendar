@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["R7FFPNZ399.com.2pensmedia.OrthodoxCalendar"],
+        "components": [
+          { "/": "/saint/*" },
+          { "/": "/get/*" }
+        ]
+      }
+    ]
+  }
+}

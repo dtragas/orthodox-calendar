@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.twopensmedia.orthodoxcalendar",
+    "sha256_cert_fingerprints": ["FA:3E:D5:36:40:E6:20:74:E7:3E:3E:D2:4D:61:0A:99:82:DD:15:BE:C7:DD:4B:22:72:1C:31:04:48:78:14:DA"]
+  }
+}]
