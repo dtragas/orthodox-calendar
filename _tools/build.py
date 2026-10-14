@@ -231,7 +231,17 @@ CROSS = ('<svg width="18" height="25" viewBox="0 0 22 30" aria-hidden="true"><g 
          '<rect x="9.5" width="3" height="30" rx="1.2"/><rect x="5" y="4" width="12" height="2.6" rx="1.2"/>'
          '<rect x="1" y="10" width="20" height="3" rx="1.4"/>'
          '<rect x="4" y="19.4" width="14" height="2.6" rx="1.2" transform="rotate(-16 11 20.7)"/></g></svg>')
-URLS = []
+URLS = []                                   # (url, last modified)
+
+# A page keeps its last-modified date until its HTML changes, so the sitemap's <lastmod>
+# and the Article dateModified only move for pages that really changed.
+MODIFIED = "__MODIFIED__"
+LASTMOD_FILE = os.path.join(ROOT, "_tools/lastmod.json")
+try:
+    OLD_LASTMOD = json.load(open(LASTMOD_FILE, encoding="utf-8"))
+except FileNotFoundError:
+    OLD_LASTMOD = {}
+LASTMOD = {}
 
 
 def badges(extra=""):
@@ -324,6 +334,11 @@ def page(path, title, desc, body, *, nav=None, ld=(), og_image=None, app_arg=Non
 </body>
 </html>
 """
+    digest = hashlib.md5(doc.encode("utf-8")).hexdigest()
+    prev = OLD_LASTMOD.get(url)
+    modified = prev[1] if prev and prev[0] == digest else TODAY.isoformat()
+    LASTMOD[url] = [digest, modified]
+    doc = doc.replace(MODIFIED, modified)
     out = os.path.join(ROOT, path.lstrip("/"))
     if path.endswith("/"):
         out = os.path.join(out, "index.html")
@@ -331,7 +346,7 @@ def page(path, title, desc, body, *, nav=None, ld=(), og_image=None, app_arg=Non
     with open(out, "w", encoding="utf-8") as f:
         f.write(doc)
     if in_sitemap and index:
-        URLS.append(url)
+        URLS.append((url, modified))
 
 
 def inner(crumbs, h1, head_extra, main, side, right=""):
@@ -386,13 +401,73 @@ def leaf(md):
             f'<a class="leaf-more" href="{day_url(m, d)}">Everything for {fmt(m, d)}</a></div>')
 
 
+# ---------------------------------------------------------------- fasting dates
+def pascha(y):
+    """Orthodox Pascha as a civil date: Meeus's Julian algorithm plus 13 days (1900-2099)."""
+    a, b, c = y % 4, y % 7, y % 19
+    d = (19 * c + 15) % 30
+    f = (2 * a + 4 * b - d + 34) % 7
+    month, day = divmod(d + f + 114, 31)
+    return datetime.date(y, month, day + 1) + datetime.timedelta(days=13)
+
+
+def short(dt):
+    return f"{MONTHS[dt.month - 1][:3]} {dt.day}"
+
+
+def span(a, b):
+    return f"{short(a)} – {short(b)}"
+
+
+FAST_YEARS = [TODAY.year, TODAY.year + 1, TODAY.year + 2]
+
+
+def apostles(y, p):
+    start, end = p + datetime.timedelta(days=57), datetime.date(y, 6, 28)
+    if start > end:
+        return "Not kept this year"
+    n = (end - start).days + 1
+    return f"{span(start, end) if n > 1 else short(end)} ({n} {'day' if n == 1 else 'days'})"
+
+
+def fast_table():
+    """The fasting year for FAST_YEARS on the New Calendar, for the fasting guide."""
+    td = datetime.timedelta
+    D = datetime.date
+    wd = lambda dt: f"{dt.strftime('%a')}, {short(dt)}"
+    rows = [
+        ("Eve of Theophany (strict fast)", lambda y, p: wd(D(y, 1, 5))),
+        ("Fast-free week after the Publican and the Pharisee", lambda y, p: span(p - td(69), p - td(64))),
+        ("Cheesefare week (no meat; dairy and eggs allowed)", lambda y, p: span(p - td(55), p - td(49))),
+        ("<b>Great Lent and Holy Week</b>", lambda y, p: span(p - td(48), p - td(1))),
+        ("<b>Pascha</b>", lambda y, p: f"<b>{wd(p)}</b>"),
+        ("Bright Week (fast-free)", lambda y, p: span(p + td(1), p + td(6))),
+        ("Fast-free week after Pentecost", lambda y, p: span(p + td(50), p + td(55))),
+        ("<b>Apostles’ Fast</b>", apostles),
+        ("<b>Dormition Fast</b>", lambda y, p: span(D(y, 8, 1), D(y, 8, 14))),
+        ("Beheading of St John the Baptist (strict fast)", lambda y, p: wd(D(y, 8, 29))),
+        ("Exaltation of the Cross (strict fast)", lambda y, p: wd(D(y, 9, 14))),
+        ("<b>Nativity Fast</b>", lambda y, p: span(D(y, 11, 15), D(y, 12, 24))),
+        ("Twelve Days of Christmas (fast-free)", lambda y, p: f"{short(D(y, 12, 25))} – {short(D(y + 1, 1, 4))}"),
+    ]
+    head = "".join(f"<th>{y}</th>" for y in FAST_YEARS)
+    body = "".join(f"<tr><td>{label}</td>" + "".join(f"<td>{fn(y, pascha(y))}</td>" for y in FAST_YEARS) + "</tr>"
+                   for label, fn in rows)
+    return f'<div class="tbl"><table><tr><th>Fast or season</th>{head}</tr>{body}</table></div>'
+
+
+def fill(s):
+    return (s.replace("{P}", P).replace("{YEAR}", str(FAST_YEARS[0])).replace("{YEAR1}", str(FAST_YEARS[1]))
+            .replace("{YEAR2}", str(FAST_YEARS[2])))
+
+
 # ---------------------------------------------------------------- guides
 def load_guides():
     out = {}
     for f in sorted(glob.glob(os.path.join(ROOT, "_tools/guides/*.html"))):
         head, body = open(f, encoding="utf-8").read().split("\n---\n", 1)
-        meta = dict(line.split(": ", 1) for line in head.splitlines())
-        meta["body"] = body.strip().replace("{P}", P)
+        meta = {k: fill(v) for k, v in (line.split(": ", 1) for line in head.splitlines())}
+        meta["body"] = fill(body.strip()).replace("{FAST_TABLE}", fast_table())
         meta["related"] = [x.strip() for x in meta["related"].split(",")]
         out[os.path.basename(f)[:-5]] = meta
     return out
@@ -420,7 +495,7 @@ def build_guides():
                  f'<h2>Related guides</h2>{guides_list(g["related"])}')
         ld = [crumbs_ld(crumbs, path),
               {"@context": "https://schema.org", "@type": "Article", "headline": html.unescape(g["h1"]),
-               "description": g["description"], "datePublished": PUBLISHED, "dateModified": TODAY.isoformat(),
+               "description": g["description"], "datePublished": PUBLISHED, "dateModified": MODIFIED,
                "mainEntityOfPage": ORIGIN + P + path, "image": f"{ORIGIN}{P}/assets/img/og.png",
                "author": {"@type": "Organization", "name": "2pensmedia Inc."},
                "publisher": {"@type": "Organization", "name": SITE}}]
@@ -575,7 +650,7 @@ def build_saints():
         desc = trim(f"{s['desc']} Feast day {dates}. " + first_para(s["bio"]), 160)
         ld = [crumbs_ld(crumbs, path),
               {"@context": "https://schema.org", "@type": "Article", "headline": s["name"], "description": s["desc"],
-               "datePublished": PUBLISHED, "dateModified": TODAY.isoformat(), "mainEntityOfPage": ORIGIN + P + path,
+               "datePublished": PUBLISHED, "dateModified": MODIFIED, "mainEntityOfPage": ORIGIN + P + path,
                "image": (f"{ORIGIN}{P}/assets/icons/{ic['img']}.webp" if ic else f"{ORIGIN}{P}/assets/img/og.png"),
                "author": {"@type": "Organization", "name": "2pensmedia Inc."},
                "publisher": {"@type": "Organization", "name": SITE}}]
@@ -848,8 +923,7 @@ def build_data():
 
 
 def build_sitemap():
-    lastmod = TODAY.isoformat()
-    body = "".join(f"<url><loc>{e(u)}</loc><lastmod>{lastmod}</lastmod></url>\n" for u in URLS)
+    body = "".join(f"<url><loc>{e(u)}</loc><lastmod>{d}</lastmod></url>\n" for u, d in URLS)
     open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8").write(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
     open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8").write(
@@ -871,6 +945,10 @@ def main():
     build_guides()
     build_404()
     build_sitemap()
+    with open(LASTMOD_FILE, "w", encoding="utf-8") as f:
+        json.dump(LASTMOD, f, indent=0, sort_keys=True)
+    changed = sum(1 for u, (_, d) in LASTMOD.items() if d == TODAY.isoformat())
+    print(f"{changed} of {len(LASTMOD)} pages changed today")
     print(f"{len(URLS)} pages: {len(ORDER)} days, {len(NAMES)} names, {len(SAINTS)} saints, {len(GUIDES)} guides")
 
 

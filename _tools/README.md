@@ -12,6 +12,12 @@ Run it after every change to `saint/saints/*.json` (new saints, new names), to a
 `calendar/`, `name-days/`, `saints/`, `guides/`, `today/`, `assets/days/`, plus `index.html`,
 `404.html`, `sitemap.xml` and `assets/names.json`. Then commit and push to publish.
 
+`_tools/lastmod.json` records a hash and a date for every page. A page's sitemap `<lastmod>` and
+`dateModified` only move when its HTML actually changes, so commit this file with every rebuild.
+
+Rebuild once in January as well: the fasting guide's dates table and title cover the build
+year and the two after it (`FAST_YEARS`), and the footer shows the year.
+
 ## Saint icons
 
     python3 _tools/prep_icons.py
