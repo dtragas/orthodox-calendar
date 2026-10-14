@@ -328,7 +328,7 @@ def page(path, title, desc, body, *, nav=None, ld=(), og_image=None, app_arg=Non
 <div><b>Calendar</b><a href="{P}/today/">Saints and name days today</a><a href="{P}/calendar/">The year, day by day</a><a href="{P}/name-days/">Name days, A to Z</a><a href="{P}/saints/">Saints, A to Z</a></div>
 <div><b>Guides</b><a href="{P}/guides/what-is-a-name-day/">What is a name day?</a><a href="{P}/guides/orthodox-easter-date/">When is Orthodox Easter?</a><a href="{P}/guides/orthodox-fasting-calendar/">The fasting calendar</a><a href="{P}/guides/">All guides</a></div>
 <div><b>The app</b><a href="{IOS_URL}">iPhone, on the App Store</a><a href="{e(PLAY_URL)}">Android, on Google Play</a><a href="{P}/support.html">Support</a><a href="{P}/privacy-policy.html">Privacy policy</a></div>
-<p class="legal">© {TODAY.year} 2pensmedia Inc. Dates are given on the New (Revised Julian) Calendar unless a page says otherwise. Follow your parish for liturgical practice. Also from us: <a href="https://lightenfamily.com/">Lighten, a shared family organizer</a>.</p>
+<p class="legal">© {TODAY.year} 2pensmedia Inc. Dates are given on the New (Revised Julian) Calendar unless a page says otherwise. Follow your parish for liturgical practice. Also from us: <a href="https://lightenfamily.com/get">Lighten, a shared family organizer</a>.</p>
 </div></footer>
 <div class="getbar" data-getbar hidden><img src="{P}/assets/img/app-icon.webp" width="42" height="42" alt=""><div><b>Orthodox Calendar</b><span>Free, no ads</span></div><a href="{P}/get/">Get the app</a><button type="button" aria-label="Hide">×</button></div>
 </body>
