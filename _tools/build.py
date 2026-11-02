@@ -243,6 +243,15 @@ except FileNotFoundError:
     OLD_LASTMOD = {}
 LASTMOD = {}
 
+# Google impressions per page from Sep 30 to Oct 18, 2026, before Google pulled the whole site down
+# on Oct 19 for thin and near-duplicate pages. Pages people were already finding stay indexed even
+# when they are short; see indexed_names() and saint_indexed().
+DEMAND_FILE = os.path.join(ROOT, "_tools/search_demand.json")
+try:
+    DEMAND = json.load(open(DEMAND_FILE, encoding="utf-8"))
+except FileNotFoundError:
+    DEMAND = {}
+
 
 def badges(extra=""):
     return (f'<div class="badges{extra}">'
@@ -659,7 +668,7 @@ def build_saints():
                    app_card("Read the life of a saint like this every morning. The app shows each day’s saints and tells you when a friend has a name day."),
                    right=right),
              nav="saints", ld=ld, og_type="article",
-             app_arg=f"/saint/?d={s['m']}-{s['d']}&s={slug}")
+             app_arg=f"/saint/?d={s['m']}-{s['d']}&s={slug}", index=saint_indexed(slug, entries))
 
     groups = {}
     for slug, entries in SAINTS.items():
@@ -686,7 +695,39 @@ def build_saints():
 
 
 # ---------------------------------------------------------------- name days
+def indexed_names():
+    """Names that share exactly the same feasts (Vassilis, Vasilios, Vasos, Bill...) make near-identical
+    pages. Google gets one page per feast set, plus any other spelling with real search demand of its
+    own (10+ impressions). The one page is the most searched spelling, else a popular name, else the
+    spelling the saint's own list gives first. The rest stay on the site as noindex."""
+    groups = {}
+    for nslug, rec in NAMES.items():
+        groups.setdefault(tuple(sorted((f["m"], f["d"], f["slug"]) for f in rec["feasts"])), []).append(nslug)
+    popular = {slugify(n) for n in POPULAR}
+
+    def rank(s):
+        rec = NAMES[s]
+        pos = min(all_names(f).index(rec["name"]) for f in rec["feasts"] if rec["name"] in all_names(f))
+        searched = DEMAND.get(f"/name-days/{s}/", 0)
+        return (searched if searched >= 10 else 0, s in popular, -pos, -len(s), s)
+
+    keep = set()
+    for g in groups.values():
+        keep.add(max(g, key=rank))
+        keep |= {s for s in g if DEMAND.get(f"/name-days/{s}/", 0) >= 10}
+    return keep
+
+
+def saint_indexed(slug, entries):
+    """A saint page goes to Google when it has a real life (80+ words), an icon, is a Great Feast,
+    or people already found it; one-paragraph entries stay on the site as noindex."""
+    words = len((entries[0]["desc"] + " " + " ".join(dict.fromkeys(x["bio"] for x in entries))).split())
+    return (words >= 80 or slug in ICONS or entries[0]["type"] == "greatFeast"
+            or DEMAND.get(f"/saints/{slug}/", 0) >= 5)
+
+
 def build_names():
+    keep = indexed_names()
     for nslug, rec in NAMES.items():
         name, feasts = rec["name"], rec["feasts"]
         path = f"/name-days/{nslug}/"
@@ -754,7 +795,7 @@ def build_names():
              inner(crumbs, f"When is {e(poss(name))} name day?", head, main,
                    app_card(f"Know someone named {e(name)}? The app checks your contacts each morning and tells you who has a name day, so you can wish them in one tap.")),
              nav="names", ld=[crumbs_ld(crumbs, path)],
-             app_arg=f"/saint/?d={lead['m']}-{lead['d']}&s={lead['slug']}")
+             app_arg=f"/saint/?d={lead['m']}-{lead['d']}&s={lead['slug']}", index=nslug in keep)
 
     groups = {}
     for nslug, rec in NAMES.items():
