@@ -45,3 +45,9 @@ Edit the table in `_tools/names_table.py` (key `"M-D-Saint name"`, masculine and
     python3 _tools/build.py
 
 It refuses to write if the three copies of a saint's name lists are out of sync.
+
+`build.py` also writes `assets/app-names.json`, which the apps (1.0.24 and later) download about
+once a day (`RemoteNames.swift` / `RemoteNames.kt`). So a new spelling for an EXISTING saint goes
+live in the apps a day or so after you push the rebuilt site, with no app update. The apps only
+add names from that file, never remove them. New saints still need an app update, and so does
+any name you want in the apps' built-in lists (run `apply_names.py --write` as above).

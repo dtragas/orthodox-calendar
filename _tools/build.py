@@ -961,6 +961,24 @@ def build_data():
     names = sorted((rec["name"] for rec in NAMES.values()), key=fold)
     json.dump(names, open(os.path.join(ROOT, "assets/names.json"), "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
+    build_app_names()
+
+
+def build_app_names():
+    """assets/app-names.json: every saint's name lists for the iOS and Android apps
+    (RemoteNames.swift / RemoteNames.kt), so a spelling added here reaches the apps
+    without an app update. Key = "M-D/slug" (church date + the apps' Saint.slug),
+    m = masculine, f = feminine. The apps only ADD names from this file and ignore it
+    when "v" is not 1, so change the format only together with both apps."""
+    app = {}
+    for m, d in ORDER:
+        for s in DAYS[(m, d)]:
+            if s["masc"] or s["fem"]:
+                key = f"{m}-{d}/{s['slug']}"
+                assert key not in app, f"two saints share {key}"
+                app[key] = {"m": s["masc"], "f": s["fem"]}
+    with open(os.path.join(ROOT, "assets/app-names.json"), "w", encoding="utf-8") as f:
+        json.dump({"v": 1, "saints": app}, f, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
 def build_sitemap():
