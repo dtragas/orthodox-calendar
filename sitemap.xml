@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://orthodoxcalendar.net/</loc><lastmod>2026-11-02</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/today/</loc><lastmod>2026-11-02</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/</loc><lastmod>2026-11-09</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/today/</loc><lastmod>2026-11-09</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/january/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/february/</loc><lastmod>2026-10-14</lastmod></url>
@@ -13,7 +13,7 @@
 <url><loc>https://orthodoxcalendar.net/calendar/august/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/september/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/october/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/calendar/november/</loc><lastmod>2026-10-14</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/calendar/november/</loc><lastmod>2026-11-09</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/december/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/january-1/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/january-2/</loc><lastmod>2026-10-14</lastmod></url>
@@ -328,7 +328,7 @@
 <url><loc>https://orthodoxcalendar.net/calendar/november-6/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/november-7/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/november-8/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/calendar/november-9/</loc><lastmod>2026-10-14</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/calendar/november-9/</loc><lastmod>2026-11-09</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/november-10/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/november-11/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/calendar/november-12/</loc><lastmod>2026-10-14</lastmod></url>
@@ -1124,7 +1124,7 @@
 <url><loc>https://orthodoxcalendar.net/name-days/linos/</loc><lastmod>2026-11-02</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/lazare/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/angeliki/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/name-days/nektarios/</loc><lastmod>2026-11-02</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/name-days/nektarios/</loc><lastmod>2026-11-09</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/theoktiste/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/erastos/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/orestis/</loc><lastmod>2026-10-14</lastmod></url>
@@ -1198,7 +1198,7 @@
 <url><loc>https://orthodoxcalendar.net/name-days/marcello/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/anysia/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/name-days/melania/</loc><lastmod>2026-11-02</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/name-days/</loc><lastmod>2026-10-14</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/name-days/</loc><lastmod>2026-11-09</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/basil-the-great/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/circumcision-of-the-lord/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/gregory-of-nazianzus-the-elder/</loc><lastmod>2026-10-14</lastmod></url>
@@ -2132,10 +2132,10 @@
 <url><loc>https://orthodoxcalendar.net/saints/olga-of-alaska/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/archangel-michael-of-panormitis/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/archangel-michael-of-mantamados/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/saints/nektarios-of-aegina/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/saints/matrona-of-constantinople/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/saints/theoktiste-of-lesbos/</loc><lastmod>2026-10-14</lastmod></url>
-<url><loc>https://orthodoxcalendar.net/saints/john-kolovos/</loc><lastmod>2026-10-14</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/saints/nektarios-of-aegina/</loc><lastmod>2026-11-09</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/saints/matrona-of-constantinople/</loc><lastmod>2026-11-09</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/saints/theoktiste-of-lesbos/</loc><lastmod>2026-11-09</lastmod></url>
+<url><loc>https://orthodoxcalendar.net/saints/john-kolovos/</loc><lastmod>2026-11-09</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/erastos-the-apostle/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/arsenios-of-cappadocia/</loc><lastmod>2026-10-14</lastmod></url>
 <url><loc>https://orthodoxcalendar.net/saints/orestes-the-physician/</loc><lastmod>2026-10-14</lastmod></url>

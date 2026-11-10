@@ -21,6 +21,7 @@ ADD = {
  "10-26-Demetrios the Great Martyr": ("Mitsos Jim Demetris", "Dimitra Demetra Dimitroula Mimi Demi"),
  "11-1-Kosmas and Damian (Asian)": ("Argyris Argiris Anargyros", "Argyro Argiro Anargyri Damiani"),
  "11-8-Synaxis of Archangels Michael and Gabriel": ("Aggelos Stamatis Stamatios Taxiarchis Raphael Rafail", "Michaela Gabriella Gavriella Gavriela Angeliki Aggeliki Angela Angelina Stamatia Stamatina Matina Rafaela"),
+ "11-9-Nektarios of Aegina": ("", "Nectaria"),
  "11-14-Philip the Apostle": ("", "Filippa Philippa"),
  "11-25-Catherine the Great Martyr": ("", "Catherine Ekaterini Kaiti Katie Kathy"),
  "11-30-Andrew the First-Called": ("Andy", "Andriana Andrianna"),
