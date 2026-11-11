@@ -465,9 +465,90 @@ def fast_table():
     return f'<div class="tbl"><table><tr><th>Fast or season</th>{head}</tr>{body}</table></div>'
 
 
+# ---------------------------------------------------------------- Nativity Fast printable
+# Same rules as the apps' FastingRules (Greek Orthodox Archdiocese): fish, wine and oil until Dec 17
+# except Wednesdays and Fridays (strict); Nov 21 always fish; Dec 18–23 strict on weekdays, wine and oil
+# on Saturdays and Sundays; Dec 24 strict. Fixed dates follow the CHURCH date (Old Calendar = civil − 13).
+NATIVITY_FEASTS = {(11, 21): "Entry of the Theotokos", (11, 25): "St. Catherine", (11, 30): "St. Andrew",
+                   (12, 4): "St. Barbara", (12, 6): "St. Nicholas", (12, 12): "St. Spyridon",
+                   (12, 24): "Eve of the Nativity"}
+NATIVITY_LEVELS = {"fish": ("Fish, wine and oil", "F"), "oil": ("Wine and oil", "W"), "strict": ("Strict fast", "S")}
+
+
+def nativity_year():
+    return TODAY.year - (1 if TODAY.month == 1 and TODAY.day <= 6 else 0)
+
+
+def nativity_level(m, d, civil):
+    wed_fri, weekend = civil.weekday() in (2, 4), civil.weekday() in (5, 6)
+    if (m, d) == (11, 21):
+        return "fish"
+    if m == 11 or d <= 17:
+        return "strict" if wed_fri else "fish"
+    if d == 24:
+        return "strict"
+    return "oil" if weekend else "strict"
+
+
+def nativity_feast(m, d, civil):
+    if (m, d) in NATIVITY_FEASTS:
+        return NATIVITY_FEASTS[(m, d)]
+    if civil.weekday() == 6 and m == 12 and 11 <= d <= 17:
+        return "Sunday of the Forefathers"
+    if civil.weekday() == 6 and m == 12 and 18 <= d <= 23:
+        return "Sunday before the Nativity"
+    return ""
+
+
+def nativity_grid(y, old):
+    td, shift = datetime.timedelta, 13 if old else 0
+    start, end = datetime.date(y, 11, 15) + td(shift), datetime.date(y, 12, 24) + td(shift)
+    day = start - td((start.weekday() + 1) % 7)          # the Sunday on or before the first day
+    rows, feasts, counts = [], [], {"fish": 0, "oil": 0, "strict": 0}
+    while day <= end:
+        cells = []
+        for _ in range(7):
+            if start <= day <= end:
+                church = day - td(shift)
+                lv = nativity_level(church.month, church.day, day)
+                counts[lv] += 1
+                feast = nativity_feast(church.month, church.day, day)
+                label = day.strftime("%b ") + str(day.day) if day == start or day.day == 1 else str(day.day)
+                long_t, short_t = NATIVITY_LEVELS[lv]
+                star = '<span class="nf-star" aria-hidden="true">★</span>' if feast else ""
+                cells.append(f'<td class="nf-{lv}"><b>{label}</b>{star}<span class="nf-l">{long_t}</span>'
+                             f'<span class="nf-s" aria-hidden="true">{short_t}</span>'
+                             + (f'<small class="nf-f">{e(feast)}</small>' if feast else "") + "</td>")
+                if feast:
+                    when = day.strftime("%a, %b ") + str(day.day)
+                    feasts.append(f"<li><b>{when}</b> {e(feast)}" + (f" (church date {church.strftime('%b')} {church.day})" if old else "")
+                                  + f": {long_t.lower()}</li>")
+            else:
+                cells.append('<td class="nf-out"></td>')
+            day += td(1)
+        rows.append("<tr>" + "".join(cells) + "</tr>")
+    head = "".join(f"<th>{d}</th>" for d in ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"))
+    title = (f"Old Calendar: November 28, {y} to January 6, {y + 1}" if old
+             else f"New Calendar: November 15 to December 24, {y}")
+    sub = ("For parishes on the Julian (Old) Calendar. The church dates are the same; they fall 13 days later on the civil calendar, and the Nativity is kept on January 7."
+           if old else "For parishes on the Revised Julian (New) Calendar, including the Greek Orthodox Archdiocese and the OCA.")
+    tally = f'{counts["strict"]} strict days, {counts["oil"]} wine-and-oil days, {counts["fish"]} days with fish, wine and oil.'
+    return (f'<section class="nf" id="{"old" if old else "new"}-calendar"><h2>{title}</h2><p class="nf-sub">{sub}</p>'
+            f'<div class="nf-wrap"><table class="nf-grid"><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
+            f'<ul class="nf-key"><li><i class="nf-fish"></i>F = Fish, wine and oil</li><li><i class="nf-oil"></i>W = Wine and oil</li>'
+            f'<li><i class="nf-strict"></i>S = Strict fast: no meat, dairy, eggs, fish, wine or oil</li></ul>'
+            f'<p class="nf-tally">{tally}</p><h3>Feasts and Sundays during the fast</h3><ul class="nf-feasts">{"".join(feasts)}</ul>'
+            f'<p class="nf-print">Free printable from orthodoxcalendar.net/guides/nativity-fast-calendar/ · Orthodox Calendar app: fast days, saints and name days</p></section>')
+
+
+def nativity_table():
+    y = nativity_year()
+    return nativity_grid(y, False) + nativity_grid(y, True)
+
+
 def fill(s):
     return (s.replace("{P}", P).replace("{YEAR}", str(FAST_YEARS[0])).replace("{YEAR1}", str(FAST_YEARS[1]))
-            .replace("{YEAR2}", str(FAST_YEARS[2])))
+            .replace("{YEAR2}", str(FAST_YEARS[2])).replace("{NYEAR}", str(nativity_year())))
 
 
 # ---------------------------------------------------------------- guides
@@ -476,7 +557,7 @@ def load_guides():
     for f in sorted(glob.glob(os.path.join(ROOT, "_tools/guides/*.html"))):
         head, body = open(f, encoding="utf-8").read().split("\n---\n", 1)
         meta = {k: fill(v) for k, v in (line.split(": ", 1) for line in head.splitlines())}
-        meta["body"] = fill(body.strip()).replace("{FAST_TABLE}", fast_table())
+        meta["body"] = fill(body.strip()).replace("{FAST_TABLE}", fast_table()).replace("{NATIVITY_TABLE}", nativity_table())
         meta["related"] = [x.strip() for x in meta["related"].split(",")]
         out[os.path.basename(f)[:-5]] = meta
     return out
@@ -485,7 +566,7 @@ def load_guides():
 GUIDES = load_guides()
 GUIDE_ORDER = ["what-is-a-name-day", "greek-name-day-today", "chronia-polla-name-day-wishes",
                "old-calendar-vs-new-calendar", "orthodox-easter-date", "orthodox-fasting-calendar",
-               "orthodox-feast-days"]
+               "nativity-fast-calendar", "orthodox-feast-days"]
 
 
 def guides_list(slugs):
